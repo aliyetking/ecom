@@ -1,7 +1,47 @@
-﻿services:
-  ecom.apı:
-    image: ecom.api
+﻿version: '3.9'
+
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: ecom-mssql
+    ports:
+      - "${MSSQL_PORT}:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${SA_PASSWORD}
+    volumes:
+      - mssql_data:/var/opt/mssql
+
+  migrator:
     build:
       context: .
       dockerfile: ECom.API/Dockerfile
+    container_name: ecom-migrator
+    depends_on:
+      - mssql
+    command: >
+      bash -c "
+      echo 'Waiting 20s for MSSQL to start...';
+      sleep 20;
+      dotnet ef database update \
+        --project ECom.Infrastructure/ECom.Infrastructure.csproj \
+        --startup-project ECom.API/ECom.API.csproj \
+        --context ECommerceDbContext
+      "
+    
+  api:
+    build:
+      context: .
+      dockerfile: ECom.API/Dockerfile
+    container_name: ecom-api
+    ports:
+      - "${API_HTTP_PORT}:8080"
+      - "${API_HTTPS_PORT}:8081"
+    depends_on:
+      - migrator
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=mssql;Database=ECommerce;User ID=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;
 
+volumes:
+  mssql_data:
