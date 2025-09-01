@@ -1,0 +1,7 @@
+﻿services:
+  ecom.apı:
+    image: ecom.api
+    build:
+      context: .
+      dockerfile: ECom.API/Dockerfile
+
