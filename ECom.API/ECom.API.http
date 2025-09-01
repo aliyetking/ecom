@@ -1,6 +1,14 @@
-@ECom.API_HostAddress = http://localhost:5247
+POST http://localhost:5247/api/v1/Product
+Content-Type: application/json
 
-GET {{ECom.API_HostAddress}}/weatherforecast/
-Accept: application/json
+{
+  "Name": "Apple MacBook Pro M4 512 GB",
+  "Price": 44000.55,
+  "Stock": 100,
+  "CategoryId": 1
+}
+###
 
+GET http://localhost:5247/api/v1/Product
+Content-Type: application/json
 ###
