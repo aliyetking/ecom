@@ -1,22 +1,28 @@
 ﻿FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
-USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
-
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
-ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+
+RUN dotnet tool install --global dotnet-ef
+ENV PATH="$PATH:/root/.dotnet/tools"
+
 COPY ["ECom.API/ECom.API.csproj", "ECom.API/"]
+COPY ["ECom.Application/ECom.Application.csproj", "ECom.Application/"]
+COPY ["ECom.Infrastructure/ECom.Infrastructure.csproj", "ECom.Infrastructure/"]
+COPY ["ECom.Domain/ECom.Domain.csproj", "ECom.Domain/"]
+
 RUN dotnet restore "ECom.API/ECom.API.csproj"
+
 COPY . .
+
 WORKDIR "/src/ECom.API"
-RUN dotnet build "./ECom.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "ECom.API.csproj" -c Release -o /app/build
 
 FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./ECom.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "ECom.API.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app

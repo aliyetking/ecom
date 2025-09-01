@@ -5,7 +5,7 @@
 namespace ECom.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateDb : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -21,6 +21,15 @@ namespace ECom.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Categories", x => x.Id);
+                });
+            
+            migrationBuilder.InsertData(
+                table: "Categories",
+                columns: new[] { "Name" },
+                values: new object[,]
+                {
+                    { "Elektronik" },
+                    { "Araç" }
                 });
 
             migrationBuilder.CreateTable(

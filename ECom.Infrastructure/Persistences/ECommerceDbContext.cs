@@ -20,7 +20,7 @@ public class ECommerceDbContext : DbContext
                   .ValueGeneratedOnAdd()
                   .UseIdentityColumn(1, 1); 
             entity.Property(x => x.Name).IsRequired().HasMaxLength(100);
-            entity.Property(x => x.Price).IsRequired();
+            entity.Property(x => x.Price).IsRequired().HasColumnType("decimal(18,2)");
             entity.Property(x => x.Stock).IsRequired();
             entity.Property(x => x.CategoryId).IsRequired();
         });
