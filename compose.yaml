@@ -1,7 +1,28 @@
-﻿services:
-  ecom.apı:
-    image: ecom.api
+﻿version: '3.9'
+
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: ecom-mssql
+    ports:
+      - "${MSSQL_PORT}:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${SA_PASSWORD}
+    volumes:
+      - mssql_data:/var/opt/mssql
+
+  api:
     build:
       context: .
       dockerfile: ECom.API/Dockerfile
+    container_name: ecom-api
+    ports:
+      - "${API_HTTP_PORT}:8080"
+      - "${API_HTTPS_PORT}:8081"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=mssql;Database=ECommerce;User ID=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;
 
+volumes:
+  mssql_data:
