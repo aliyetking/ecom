@@ -19,7 +19,6 @@ services:
     container_name: ecom-api
     ports:
       - "${API_HTTP_PORT}:8080"
-      - "${API_HTTPS_PORT}:8081"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Server=mssql;Database=ECommerce;User ID=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;
