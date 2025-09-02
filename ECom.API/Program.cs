@@ -1,3 +1,4 @@
+using ECom.API.Handler;
 using ECom.Application.Interfaces;
 using ECom.Application.Mapper;
 using ECom.Application.Services;
@@ -27,6 +28,8 @@ public class Program
         builder.Services.AddScoped<IProductService, ProductService>();
 
         builder.Services.AddControllers();
+
+        builder.Services.AddExceptionHandler<CoreExceptionHandler>();
         
         builder.Services.AddSwaggerGen(options =>
         {
