@@ -4,6 +4,7 @@ using ECom.Application.Services;
 using ECom.Infrastructure.Persistences;
 using ECom.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 namespace ECom.API;
 
@@ -13,7 +14,11 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+        var password = builder.Configuration["SA_PASSWORD"];
+        var dbPort = builder.Configuration["MSSQL_PORT"];
+        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")!
+            .Replace("{ENV_SA_PASSWORD}", password)
+            .Replace("{ENV_MSSQL_PORT}", dbPort);
         builder.Services.AddDbContext<ECommerceDbContext>(options => options.UseSqlServer(connectionString));
         
         builder.Services.AddScoped<ProductMapper>();
@@ -22,8 +27,17 @@ public class Program
         builder.Services.AddScoped<IProductService, ProductService>();
 
         builder.Services.AddControllers();
-        builder.Services.AddOpenApi();
-
+        
+        builder.Services.AddSwaggerGen(options =>
+        {
+            options.SwaggerDoc("v1", new OpenApiInfo()
+            {
+                Title = "ECom API",
+                Version = "v1",
+                Description = "ECom API Documentation",
+            });
+        });
+        
         var app = builder.Build();
         
         using (var scope = app.Services.CreateScope())
@@ -32,10 +46,12 @@ public class Program
             db.Database.Migrate();
         }
 
-        if (app.Environment.IsDevelopment())
+        app.UseSwagger(); 
+        app.UseSwaggerUI(options =>
         {
-            app.MapOpenApi();
-        }
+            options.SwaggerEndpoint("/swagger/v1/swagger.json", "ECom API V1");
+            options.RoutePrefix = string.Empty;
+        });
 
         app.UseHttpsRedirection();
         app.UseAuthorization();
