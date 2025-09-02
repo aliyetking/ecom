@@ -8,6 +8,8 @@ Projeyi ve Mssql'i ayağa kaldırmak için; docker yüklü sisteminizde, termina
 (docker-compose up --build)
 komutunu çalıştırmanız yetecektir.
 
+Uygulama içerisinde ilk oluşturma migration'ı yer alıyor. Uygulama ayağa kalktığında database nesnelerini otomatik olarak oluşturmuş olacak. Categories tablosuna ilk veriler otomatik olarak eklenecek. 
+
 BaseUrl'den(mevcutta http://localhost:4400) swagger dökümanlarına ulaşabilirsiniz.
 
 Docker içinde development sertifikası oluşturmadığım için sadece http kullanılıyor.
